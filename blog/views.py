@@ -1,13 +1,30 @@
 # blog/views.py
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import get_object_or_404, render
 
 from .models import Post
 
 
 def post_list(request):
-    posts = Post.published.all()
+    object_list = Post.published.all()
+    # posts = Post.published.all()
+    # breakpoint()
 
-    return render(request, 'blog/post/list.html', {'posts': posts})
+    paginator = Paginator(object_list, 1) # 3 posts in each page
+    page = request.GET.get('page')
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer deliver the first page
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range deliver last page of results
+        posts = paginator.page(paginator.num_pages)
+    return render(request,
+            'blog/post/list.html',
+            {'page': page,
+            'posts': posts})
 
 
 def post_detail(request, year, month, day, post):
