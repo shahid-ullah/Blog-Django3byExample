@@ -1,7 +1,7 @@
 # blog/views.py
 from django.core.mail import send_mail
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, reverse
 from django.views.generic import ListView
 from taggit.models import Tag
 
@@ -63,6 +63,10 @@ def post_detail(request, year, month, day, post):
             new_comment.post = post
             # Save the comment to the database
             new_comment.save()
+            # return reverse('blog:post_detail',
+            #         args=[post.publish.year,
+            #             post.publish.month,
+            #             post.publish.day, post.slug])
     else:
         comment_form = CommentForm()
 
